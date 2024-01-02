@@ -85,6 +85,25 @@ function App() {
         })
   }
 
+  function deleteUser(id) {
+    fetch(`http://jsonplaceholder.typicode.com/users/${id}`,
+        {
+          method: "DELETE"
+        }
+      ).then((response) => response.json())
+        .then(json => {
+          setUsers((users) => {
+            return users.filter(user =>user.id !== id)
+          })
+
+          AppToaster.show({
+            message: "User Deleted successfully",
+            intent: 'success',
+            timeout: '3000'
+          })
+        })
+  }
+
   return (
     <div className="App">
       <table className='bp4-html-table modifier'>
@@ -104,7 +123,8 @@ function App() {
               <td><EditableText onChange={value => onChangeHandler(user.id, 'website', value)} value={user.website} /></td>
               <td>
                 <Button intent='primary' onClick={() => updateUser(user.id)}>Update</Button>
-                <Button intent='danger'>Delete</Button>
+                &nbsp;
+                <Button intent='danger' onClick={() => deleteUser(user.id)}>Delete</Button>
               </td>
             </tr>
           )}
