@@ -54,6 +54,37 @@ function App() {
     }
   }
 
+  function onChangeHandler(id, key, value) {
+    setUsers((users) => {
+      return users.map(user => {
+        return user.id === id ? {...user, [key]: value} : user;
+      })
+    })
+  }
+
+  function updateUser(id) {
+    const user = users.find((user) => user.id === id);
+
+    fetch(`http://jsonplaceholder.typicode.com/users/${id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(user),
+          // header use to understand these data are json
+          // UTF-8 is encoding formate
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+          }
+        }
+      ).then((response) => response.json())
+        .then(json => {
+          AppToaster.show({
+            message: "User updated successfully",
+            intent: 'success',
+            timeout: '3000'
+          })
+        })
+  }
+
   return (
     <div className="App">
       <table className='bp4-html-table modifier'>
@@ -69,10 +100,10 @@ function App() {
               <tr key={user.id}>
               <td>{user.id}</td>
               <td>{user.name}</td>
-              <td><EditableText value={user.email} /></td>
-              <td><EditableText value={user.website} /></td>
+              <td><EditableText onChange={value => onChangeHandler(user.id, 'email', value)} value={user.email} /></td>
+              <td><EditableText onChange={value => onChangeHandler(user.id, 'website', value)} value={user.website} /></td>
               <td>
-                <Button intent='primary'>Update</Button>
+                <Button intent='primary' onClick={() => updateUser(user.id)}>Update</Button>
                 <Button intent='danger'>Delete</Button>
               </td>
             </tr>
